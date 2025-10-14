@@ -7,9 +7,6 @@ on:
         required: false
         type: string
         default: '8.2'
-    secrets:
-      GITHUB_TOKEN:
-        required: true
 
 jobs:
   rector:
@@ -55,9 +52,11 @@ jobs:
         if: steps.commit.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.GH_TOKEN }}
           branch: rector/auto-update
           title: "chore: automated Rector updates"
           body: "Automated Rector run (weekly)"
           base: ${{ github.event.repository.default_branch }}
           delete-branch: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
