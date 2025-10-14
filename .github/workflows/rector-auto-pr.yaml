@@ -1,4 +1,4 @@
-name: Module Rector Runner
+name: Rector
 
 on:
   workflow_call:
