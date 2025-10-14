@@ -33,6 +33,11 @@ jobs:
       - name: Run Rector
         run: composer rector
 
+      - name: Check diff vs base branch
+        run: |
+          git fetch origin ${{ github.event.repository.default_branch }}
+          git diff --stat origin/${{ github.event.repository.default_branch }} || true
+
       - name: Create Pull Request
         if: steps.commit.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
