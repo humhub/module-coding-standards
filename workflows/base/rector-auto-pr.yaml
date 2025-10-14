@@ -1,0 +1,63 @@
+name: Module Rector Runner
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        required: false
+        type: string
+        default: '8.2'
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+
+jobs:
+  rector:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run Rector
+        run: composer rector
+
+      - name: Commit Rector changes
+        id: commit
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -b rector/auto-update || git checkout rector/auto-update
+            git add -A
+            git commit -m "chore: automated Rector updates"
+            git push origin HEAD:rector/auto-update --force
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.commit.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: rector/auto-update
+          title: "chore: automated Rector updates"
+          body: "Automated Rector run (weekly)"
+          base: ${{ github.event.repository.default_branch }}
+          delete-branch: true
