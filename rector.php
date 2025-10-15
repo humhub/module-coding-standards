@@ -2,11 +2,27 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 
-// ToDo: Add some code to increase the HumHub Core Min Version to the version required.
-//       This should matches the minPHP Version specified below in the Rector Rules
+/**
+ * Minimum PHP Version required for current Rector rules
+ *
+ * @note Also adjust the PhpSets in the RectorConfig::configure() method accordingly
+ */
+$minPhpVersion = '8.2';
+
+/**
+ * Minimum HumHub Version required for current Rector rules
+ */
+$minHumHubVersion = '1.18';
+
+
+\HumHubUtils\UpdatePhpVersion::increaseVersion($minPhpVersion);
+\HumHubUtils\UpdateHumHubMinVersion::increaseVersion($minHumHubVersion);
+
 
 return RectorConfig::configure()
     ->withPaths([

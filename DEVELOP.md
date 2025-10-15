@@ -10,7 +10,7 @@ In your module’s `composer.json`, add a **Composer path repository** entry:
   "repositories": [
     {
       "type": "path",
-      "url": "../module-coding-standards",
+      "url": "../../module-coding-standards",
       "options": {
         "symlink": true
       }

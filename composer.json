@@ -10,7 +10,8 @@
   },
   "autoload": {
     "psr-4": {
-      "HumHub\\ModuleCodingStandards\\": "src/"
+      "HumHubUtils\\RectorRules\\": "src/RectorRules",
+      "HumHubUtils\\": "src/HumHubUtils"
     }
   },
   "scripts": {
