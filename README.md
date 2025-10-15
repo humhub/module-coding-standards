@@ -7,11 +7,14 @@ used across all **HumHub modules**.
 
 ## Installation
 
+### Composer 
+
+#### To your existing `composer.json`
 Add the package to your module’s `composer.json` as a development dependency:
 
 ```bash
 composer config repositories.humhub-module-coding-standards vcs https://github.com/humhub/module-coding-standards.git
-composer require humhub/module-coding-standards:dev-main
+composer require --dev humhub/module-coding-standards:dev-main
 ```
 
 Add script section to your `composer.json`:
@@ -23,6 +26,33 @@ Add script section to your `composer.json`:
   }
 }
 ```
+
+#### Or create a minimal `composer.json`
+
+```yaml
+{
+  "name": "humhub/polls",
+  "type": "humhub-module",
+  "config": {
+    "platform": {
+      "php": "8.2"
+    }
+  },
+  "repositories": {
+    "humhub-module-coding-standards": {
+      "type": "vcs",
+      "url": "https://github.com/humhub/module-coding-standards.git"
+    }
+  },
+  "require-dev": {
+    "humhub/module-coding-standards": "dev-main"
+  },
+  "scripts": {
+    "rector": "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php"
+  }
+}
+```
+> Hint: Please always commit your `composer.lock`.
 
 ### Install Workflows
 
