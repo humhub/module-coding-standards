@@ -1,15 +1,13 @@
 # HumHub - Module Coding Standards
 
-Central repository for **code quality**, **Rector rules**, and **developer tooling**  
-used across all **HumHub modules**.
-
-> This repository is **only intended for HumHub module development**, not for the core framework itself.
+Central repository for **code quality**, **Rector rules**, and **developer tooling** used across all **HumHub modules**.
 
 ## Installation
 
 ### Composer 
 
 #### To your existing `composer.json`
+
 Add the package to your module’s `composer.json` as a development dependency:
 
 ```bash
@@ -31,7 +29,7 @@ Add script section to your `composer.json`:
 
 ```yaml
 {
-  "name": "humhub/polls",
+  "name": "humhub/example-basic",
   "type": "humhub-module",
   "config": {
     "platform": {
@@ -52,7 +50,8 @@ Add script section to your `composer.json`:
   }
 }
 ```
-> Hint: Please always commit your `composer.lock`.
+
+> Hint: Make sure to always commit the `composer.lock` as well.
 
 ### Install Workflows
 
@@ -60,3 +59,4 @@ Add script section to your `composer.json`:
 mkdir -p .github/workflows
 cp vendor/humhub/module-coding-standards/workflows/rector-auto-pr.yaml .github/workflows
 ```
+
