@@ -17,6 +17,6 @@
   "scripts": {
     "rector": "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php",
     "phpstan": "vendor/bin/phpstan analyse --configuration=vendor/humhub/module-coding-standards/phpstan.neon",
-    "fix": "vendor/bin/php-cs-fixer fix --config=vendor/humhub/module-coding-standards/.php-cs-fixer.dist.php"
+    "fixer": "vendor/bin/php-cs-fixer fix --config=vendor/humhub/module-coding-standards/php-cs-fixer.php"
   }
 }
