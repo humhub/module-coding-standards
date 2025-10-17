@@ -31,6 +31,7 @@ return RectorConfig::configure()
     ->withSkip([
         \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector::class,
+        \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         getcwd() . '/vendor',
         getcwd() . '/messages',
     ])
