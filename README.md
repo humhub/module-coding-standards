@@ -6,26 +6,26 @@ Central repository for **code quality**, **Rector rules**, and **developer tooli
 
 ### Composer 
 
-#### To your existing `composer.json`
+To create a initial Composer config:
 
-Add the package to your module’s `composer.json` as a development dependency:
+```bash
+composer init \
+  --name="humhub/example-basic" \
+  --type="humhub-module" \
+  --no-interaction
+
+composer config platform.php 8.2
+```
+
+After the `composer.json` file has been created:
 
 ```bash
 composer config repositories.humhub-module-coding-standards vcs https://github.com/humhub/module-coding-standards.git
 composer require --dev humhub/module-coding-standards:dev-main
+composer config scripts.rector "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php"
 ```
 
-Add script section to your `composer.json`:
-
-```json
-{
-  "scripts": {
-    "rector": "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php"
-  }
-}
-```
-
-#### Or create a minimal `composer.json`
+Example of a minimal `composer.json`:
 
 ```yaml
 {

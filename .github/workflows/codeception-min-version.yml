@@ -106,7 +106,7 @@ jobs:
           echo "php-version=[\"$phpmin\"]" >> $GITHUB_OUTPUT
 
   call-base:
-    uses: ./.github/workflows/module-tests-base.yml
+    uses: ./.github/workflows/codeception-base.yml
     needs: determine-min-version
     with:
       module-id: ${{ inputs.module-id }}

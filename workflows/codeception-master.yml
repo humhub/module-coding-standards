@@ -1,4 +1,4 @@
-name: PHP Codeception Tests - master
+name: Codeception Tests - master
 
 on:
   push:

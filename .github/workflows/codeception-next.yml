@@ -57,7 +57,7 @@ on:
 
 jobs:
   call-base:
-    uses: ./.github/workflows/module-tests-base.yml
+    uses: ./.github/workflows/codeception-base.yml
     with:
       module-id: ${{ inputs.module-id }}
       humhub-branch: ${{ inputs.humhub-branch }}

@@ -1,4 +1,4 @@
-name: PHP Codeception Tests - develop
+name: Codeception Tests - develop
 
 on:
   push:

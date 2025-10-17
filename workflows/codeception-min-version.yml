@@ -1,4 +1,4 @@
-name: PHP Codeception Tests - min version
+name: Codeception Tests - min version
 
 on:
   push:
