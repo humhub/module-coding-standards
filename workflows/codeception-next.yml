@@ -1,0 +1,14 @@
+name: PHP Codeception Tests - next
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  tests:
+    uses: humhub/module-coding-standards/.github/workflows/codeception-next.yml@main
+    with:
+      module-id: example-basic
+      use-rest-module: false

@@ -55,8 +55,16 @@ Add script section to your `composer.json`:
 
 ### Install Workflows
 
-```
-mkdir -p .github/workflows
-cp vendor/humhub/module-coding-standards/workflows/rector-auto-pr.yaml .github/workflows
-```
+The predefined workflows from the `workflows` folder should be copied to the `.github/workflows` folder in the module. 
 
+| Workflow                | Description                                                                            |
+|-------------------------|----------------------------------------------------------------------------------------|
+| php-cs-fixer            | PHP CS Fixer runs automatically on commits to the `master` or `develop` branch.        |
+| rector-auto-pr          | Automatic weekly Rector run with additional HumHub-specific adjustments. Creates a PR. |
+| codeception-master      | Codeception tests against the HumHub core `master` branch                              |  
+| codeception-develop     | Codeception tests against the HumHub core `develop` branch                             |  
+| codeception-next        | Codeception tests against the HumHub core `next` branch                                |  
+| codeception-min-version | Codeception tests against the HumHub minimum version defined in `module.json`          |  
+| marketplace-upload      | On GitHub Module Releases, a module version is uploaded to the Marketplace.            |  
+
+> Note: Some workflows require additional configuration. e.g. Codeception enable REST API
