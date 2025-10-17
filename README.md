@@ -23,6 +23,7 @@ After the `composer.json` file has been created:
 composer config repositories.humhub-module-coding-standards vcs https://github.com/humhub/module-coding-standards.git
 composer require --dev humhub/module-coding-standards:dev-main
 composer config scripts.rector "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php"
+composer config scripts.fixer "vendor/bin/php-cs-fixer fix --config=vendor/humhub/module-coding-standards/php-cs-fixer.php"
 ```
 
 Example of a minimal `composer.json`:
@@ -46,7 +47,8 @@ Example of a minimal `composer.json`:
     "humhub/module-coding-standards": "dev-main"
   },
   "scripts": {
-    "rector": "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php"
+    "rector": "vendor/bin/rector process --config=vendor/humhub/module-coding-standards/rector.php",
+    "fixer": "vendor/bin/php-cs-fixer fix --config=vendor/humhub/module-coding-standards/php-cs-fixer.php
   }
 }
 ```
