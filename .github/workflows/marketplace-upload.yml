@@ -2,11 +2,12 @@ name: Upload Module to HumHub Marketplace
 
 on:
   workflow_call:
-    module-id:
-      description: Marketplace ID of the Module
-      default: ${{ github.event.repository.name }}
-      required: false
-      type: string
+    inputs:
+      module-id:
+        description: Marketplace ID of the Module
+        default: ${{ github.event.repository.name }}
+        required: false
+        type: string
       
 jobs:
   build:
