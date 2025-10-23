@@ -2,39 +2,56 @@ name: Upload Module to HumHub Marketplace
 
 on:
   workflow_call:
-
+    inputs:
+      module-id:
+        description: The module id.
+        required: false
+        type: string
 jobs:
   build:
     name: Build and Upload Module Package
     runs-on: ubuntu-latest
     steps:
+      - name: Determine module ID
+        id: detect
+        run: |
+          if [ -n "${{ inputs.module_id }}" ]; then
+            module_id="${{ inputs.module_id }}"
+          else
+            module_id="${GITHUB_REPOSITORY##*/}"
+          fi
+
+          echo "Detected module ID: $module_id"
+          echo "MODULE_ID=$module_id" >> "$GITHUB_ENV"
+        
+
       - name: Checkout code
         uses: actions/checkout@v4
         with: 
-          path: ${{ inputs.module-id }}
+          path: ${{ MODULE_ID }}
 
       - name: Install Composer
-        if: ${{ hashFiles(format('{0}/composer.json', inputs.module-id)) != '' }}
-        run: cd ${{ inputs.module-id }}; composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev --ansi
+        if: ${{ hashFiles(format('{0}/composer.json', MODULE_ID)) != '' }}
+        run: cd ${{ MODULE_ID }}; composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-dev --ansi
 
       - name: Install NPM
-        if: ${{ hashFiles(format('{0}/package.json', inputs.module-id)) != '' }}
-        run: cd ${{ inputs.module-id }}; npm install
+        if: ${{ hashFiles(format('{0}/package.json', MODULE_ID)) != '' }}
+        run: cd ${{ MODULE_ID}}; npm install
 
       - name: Build project
         run: |
-          zip -r ${{ inputs.module-id }}.zip ${{ inputs.module-id }}/
+          zip -r ${{ MODULE_ID }}.zip ${{ MODULE_ID }}/
 
       - name: Upload Package to HumHub Marketplace
         run: |
           curl --fail \
           -F "key=${{secrets.MARKETPLACE_API_KEY}}" \
-          -F "ModuleVersionUpload[zipFile]=@${{ inputs.module-id }}.zip" \
-          https://api.humhub.com/v1/marketplace/upload?moduleId=${{ inputs.module-id }}
+          -F "ModuleVersionUpload[zipFile]=@${{ MODULE_ID }}.zip" \
+          https://api.humhub.com/v1/marketplace/upload?moduleId=${{ MODULE_ID }}
 
       - name: Upload Package to HumHub Marketplace (Integration)
         run: |
           curl --fail \
           -F "key=${{secrets.MARKETPLACE_API_KEY_INT}}" \
-          -F "ModuleVersionUpload[zipFile]=@${{ inputs.module-id }}.zip" \
-          https://api.humhub.dev/v1/marketplace/upload?moduleId=${{ inputs.module-id }}
+          -F "ModuleVersionUpload[zipFile]=@${{ MODULE_ID }}.zip" \
+          https://api.humhub.dev/v1/marketplace/upload?moduleId=${{ MODULE_ID }}
