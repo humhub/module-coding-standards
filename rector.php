@@ -28,12 +28,17 @@ return RectorConfig::configure()
     ->withPaths([
         getcwd(),
     ])
+    ->withAutoloadPaths([
+        getcwd() . '/../humhub',
+        getcwd() . '/../humhub/vendor/autoload.php',
+    ])
     ->withSkip([
         \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector::class,
         \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         getcwd() . '/vendor',
         getcwd() . '/messages',
+        getcwd() . '/../humhub',
     ])
     ->withPhpSets(php82: true)
     ->withTypeCoverageLevel(0)
@@ -46,5 +51,5 @@ return RectorConfig::configure()
         RenameClassRector::class,
         [
             //'OldNamespace\\OldClass' => 'NewNamespace\\NewClass',
-        ]
+        ],
     );
