@@ -16,9 +16,17 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout
+      - name: Checkout HumHub Core
         uses: actions/checkout@v4
         with:
+          repository: humhub/humhub
+          path: humhub
+          fetch-depth: 0
+
+      - name: Checkout Module
+        uses: actions/checkout@v4
+        with:
+          path: module
           fetch-depth: 0
 
       - name: Setup PHP
@@ -28,15 +36,20 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer update --no-interaction --no-progress --prefer-dist
+        run: |
+            cd humhub
+            composer update --no-interaction --no-progress --prefer-dist
+            cd ../module
+            composer update --no-interaction --no-progress --prefer-dist
+            cd ..
 
       - name: Run Rector
-        run: composer rector
+        run: composer rector -- humhub module
 
       - name: Check diff vs base branch
         run: |
           git fetch origin ${{ github.event.repository.default_branch }}
-          git diff --stat origin/${{ github.event.repository.default_branch }} || true
+          git diff --stat origin/${{ github.event.repository.default_branch }} -- module || true
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
@@ -46,5 +59,6 @@ jobs:
           title: "chore: automated Rector updates"
           body: "Automated Rector run (weekly)"
           delete-branch: true
+          paths: module/**
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
