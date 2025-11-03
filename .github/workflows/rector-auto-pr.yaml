@@ -55,12 +55,16 @@ jobs:
           git fetch origin ${{ github.event.repository.default_branch }}
           git diff --stat origin/${{ github.event.repository.default_branch }} || true
 
+      - name: Stage Rector changes
+        run: |
+          cd module
+          git add -A
+          cd ..
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ env.GH_TOKEN }}
-          path: module
-          add-paths: module/**
           branch: rector/auto-update
           title: "chore: automated Rector updates"
           body: "Automated Rector run (weekly)"
