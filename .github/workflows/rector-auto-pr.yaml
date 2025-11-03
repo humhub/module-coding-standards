@@ -50,8 +50,8 @@ jobs:
             cd ..
 
       - name: Check diff vs base branch
-        working-directory: module
         run: |
+          cd module
           git fetch origin ${{ github.event.repository.default_branch }}
           git diff --stat origin/${{ github.event.repository.default_branch }} || true
 
@@ -63,6 +63,6 @@ jobs:
           title: "chore: automated Rector updates"
           body: "Automated Rector run (weekly)"
           delete-branch: true
+          paths: module/**
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: module
