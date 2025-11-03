@@ -47,6 +47,7 @@ jobs:
         run: |
             cd module
             composer rector -- ../humhub .
+            cd ..
 
       - name: Check diff vs base branch
         run: |
