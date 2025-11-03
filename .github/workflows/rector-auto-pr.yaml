@@ -59,10 +59,11 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ env.GH_TOKEN }}
+          path: module
+          add-paths: module/**
           branch: rector/auto-update
           title: "chore: automated Rector updates"
           body: "Automated Rector run (weekly)"
           delete-branch: true
-          paths: module/**
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
