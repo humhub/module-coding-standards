@@ -61,10 +61,13 @@ jobs:
           git add -A
           cd ..
 
+      - name: Set PR token
+        run: echo "PR_TOKEN=${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ env.GH_TOKEN }}
+          token: ${{ env.PR_TOKEN }}
           path: module
           branch: rector/auto-update
           title: "chore: automated Rector updates"
