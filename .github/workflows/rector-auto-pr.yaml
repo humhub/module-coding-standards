@@ -73,5 +73,3 @@ jobs:
           title: "chore: automated Rector updates"
           body: "Automated Rector run (weekly)"
           delete-branch: true
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
