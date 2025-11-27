@@ -45,7 +45,7 @@ return RectorConfig::configure()
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0)
     ->withRules([
-        // Some own rules
+        \Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector::class
     ])
     ->withConfiguredRule(
         RenameClassRector::class,
