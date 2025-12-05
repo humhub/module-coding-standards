@@ -1,0 +1,86 @@
+name: Update Marketplace Workflows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout admin repo
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git jq
+
+      - name: Fetch list of repos in humhub org
+        run: |
+          curl -s -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            https://api.github.com/orgs/humhub/repos?per_page=200 \
+            | jq -r '.[].ssh_url' > repos.txt
+
+      - name: Process repositories and create PRs
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          NEW_CONTENT=$(cat << 'EOF'
+on:
+  push:
+    tags:
+      - 'v*'
+
+name: Upload to HumHub Marketplace
+
+jobs:
+  build:
+    uses: humhub/module-coding-standards/.github/workflows/marketplace-upload.yml@main
+    secrets: inherit
+EOF
+)
+
+          while read -r REPO_URL; do
+            echo "Processing $REPO_URL"
+            REPO_NAME=$(basename "$REPO_URL" .git)
+
+            git clone "$REPO_URL"
+            cd "$REPO_NAME" || exit
+
+            FILE=".github/workflows/marketplace-upload.yml"
+            BRANCH="update-marketplace-workflow"
+
+            if [ -f "$FILE" ]; then
+              if grep -q "uses: humhub/actions/.github/workflows/module-marketplace-upload.yml@main" "$FILE"; then
+                echo "  Updating file and creating PR..."
+
+                git checkout -b "$BRANCH"
+
+                echo "$NEW_CONTENT" > "$FILE"
+
+                git add "$FILE"
+                git commit -m "Update marketplace-upload.yml to new standard workflow" || true
+                git push -u origin "$BRANCH" || true
+
+                # Create PR
+                gh pr create \
+                  --title "Update marketplace-upload.yml to new standard workflow" \
+                  --body "This PR updates the marketplace upload workflow to the new standard version." \
+                  --repo "humhub/$REPO_NAME" || true
+
+              else
+                echo "  File exists but old string not found — skipping"
+              fi
+            else
+              echo "  No marketplace-upload.yml found — skipping"
+            fi
+
+            cd ..
+            rm -rf "$REPO_NAME"
+          done < repos.txt
