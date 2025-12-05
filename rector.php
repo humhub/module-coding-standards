@@ -22,6 +22,7 @@ $minHumHubVersion = '1.18';
 
 \HumHubUtils\UpdatePhpVersion::increaseVersion($minPhpVersion);
 \HumHubUtils\UpdateHumHubMinVersion::increaseVersion($minHumHubVersion);
+\HumHubUtils\UpdateMarketplaceUpload::run();
 
 
 return RectorConfig::configure()
