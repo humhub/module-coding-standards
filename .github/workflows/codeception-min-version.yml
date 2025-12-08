@@ -88,12 +88,12 @@ jobs:
           tags=$(git tag -l "v${base}*")
           if [ -n "$tags" ]; then
             latest=$(echo "$tags" | sort -V | tail -n1)
+            echo "Found latest patch tag: $latest"
           else
-            echo "❌ No tag found for base ${base}"
-            exit 1
+            echo "⚠️ No tag found for base ${base}. Using 'develop' branch."
+            latest="develop"
           fi
-          
-          echo "Found latest patch tag: $latest"
+
           echo "humhub-tag=$latest" >> $GITHUB_OUTPUT
 
       - name: Read minRecommendedPhpVersion
