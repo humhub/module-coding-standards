@@ -46,7 +46,7 @@ return RectorConfig::configure()
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0)
     ->withRules([
-        \Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector::class
+        \HumHubUtils\RectorRules\ForceExplicitNullableParamRector::class,
     ])
     ->withConfiguredRule(
         RenameClassRector::class,
