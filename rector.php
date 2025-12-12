@@ -34,7 +34,7 @@ return RectorConfig::configure()
         getcwd() . '/../humhub/vendor/autoload.php',
     ])
     ->withSkip([
-        \Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
+        \Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector::class,
         \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
         getcwd() . '/vendor',
