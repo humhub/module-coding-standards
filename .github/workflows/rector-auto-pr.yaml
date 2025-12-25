@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
             cd humhub
-            composer update --no-interaction --no-progress --prefer-dist
+            composer install --no-interaction --no-progress --prefer-dist
             cd ../module
             composer update --no-interaction --no-progress --prefer-dist
             cd ..
