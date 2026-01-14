@@ -10,9 +10,9 @@ on:
         type: string
     secrets:
       MARKETPLACE_API_KEY:
-        required: true
+        required: false
       MARKETPLACE_API_KEY_INT:
-        required: true
+        required: false
 
 jobs:
   build:
