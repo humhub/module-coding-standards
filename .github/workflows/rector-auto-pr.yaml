@@ -59,7 +59,7 @@ jobs:
         run: |
           cd module
           git add -A
-          git reset -- composer.lock
+          git restore composer.lock 2>/dev/null || rm -f composer.lock
           cd ..
 
       - name: Set PR token
