@@ -36,6 +36,7 @@ return RectorConfig::configure()
         \Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnNeverTypeRector::class,
         \Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector::class,
+        \Rector\CodingStyle\Rector\FuncCall\FunctionFirstClassCallableRector::class,
         getcwd() . '/vendor',
         getcwd() . '/messages',
         getcwd() . '/../humhub',
