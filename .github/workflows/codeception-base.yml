@@ -35,6 +35,10 @@ on:
         description: Activate REST API module for api tests.
         default: false
         type: boolean
+      rest-module-branch:
+        description: REST API Module Branch.
+        type: string
+        default: master
       run-solr:
         description: Run Apache Solr.
         default: false
@@ -276,7 +280,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'humhub/rest'
-          ref: 'master'
+          ref: ${{ inputs.rest-module-branch }}
           path: 'protected/modules/rest'
 
 # This module should be activated on HumHubApiTestCest::_before()
