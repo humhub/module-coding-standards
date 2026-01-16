@@ -59,6 +59,7 @@ jobs:
         run: |
           cd module
           git add -A
+          git restore --staged composer.lock 2>/dev/null || true
           git restore composer.lock 2>/dev/null || rm -f composer.lock
           cd ..
 
