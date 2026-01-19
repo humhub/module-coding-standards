@@ -11,6 +11,13 @@ class UpdateHumHubMinVersion
             $moduleJson = json_decode(file_get_contents($moduleJsonPath), true);
             if (self::mustBeIncreased($moduleJson['humhub']['minVersion'], $minHumHubVersion)) {
                 $moduleJson['humhub']['minVersion'] = $minHumHubVersion;
+
+                // To be sure the max version is not less than the new min version
+                if (isset($moduleJson['humhub']['maxVersion'])
+                    && self::mustBeIncreased($moduleJson['humhub']['maxVersion'], $minHumHubVersion)) {
+                    $moduleJson['humhub']['maxVersion'] = $minHumHubVersion;
+                }
+
                 file_put_contents(
                     $moduleJsonPath,
                     json_encode($moduleJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
