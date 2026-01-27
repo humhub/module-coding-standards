@@ -47,6 +47,7 @@ jobs:
         run: |
             cd module
             composer rector -- ../humhub .
+            git diff --quiet || php vendor/humhub/module-coding-standards/src/HumHubUtils/UpdateChangelog.php
             cd ..
 
       - name: Check diff vs base branch
