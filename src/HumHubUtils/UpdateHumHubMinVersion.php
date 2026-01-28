@@ -60,7 +60,7 @@ class UpdateHumHubMinVersion
      * @param int $level
      * @return string
      */
-    private static function increaseVersionLevel(string $version, int $level = 2): string
+    public static function increaseVersionLevel(string $version, int $level = 2): string
     {
         $version = explode('.', $version);
 
