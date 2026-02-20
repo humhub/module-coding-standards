@@ -38,7 +38,7 @@ on:
       rest-module-branch:
         description: REST API Module Branch.
         type: string
-        default: master
+        default: develop
       run-solr:
         description: Run Apache Solr.
         default: false
