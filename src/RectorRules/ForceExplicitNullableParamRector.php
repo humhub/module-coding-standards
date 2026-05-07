@@ -43,9 +43,9 @@ CODE,
 
         // Default value must be defined as `null`
         if (!$node->default instanceof Node || !$this->nodeComparator->areNodesEqual(
-                $node->default,
-                new Node\Expr\ConstFetch(new Node\Name('null')),
-            )) {
+            $node->default,
+            new Node\Expr\ConstFetch(new Node\Name('null')),
+        )) {
             return null;
         }
 
