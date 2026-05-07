@@ -37,21 +37,28 @@ CODE,
     public function refactor(Node $node): ?Node
     {
         // Type must exist and be a Node
-        if (!$node->type instanceof Node) {
+        if (!$node->type instanceof Node || $node->type instanceof Node\NullableType) {
             return null;
         }
 
         // Default value must be defined as `null`
         if (!$node->default instanceof Node || !$this->nodeComparator->areNodesEqual(
-            $node->default,
-            new Node\Expr\ConstFetch(new Node\Name('null')),
-        )) {
+                $node->default,
+                new Node\Expr\ConstFetch(new Node\Name('null')),
+            )) {
             return null;
         }
 
         // Skip if the param is already nullable
-        if ($node->type instanceof NullableType) {
-            return null;
+        if ($node->type instanceof Node\UnionType) {
+            foreach ($node->type->types as $subType) {
+                if ($this->isName($subType, 'null') || $this->isName($subType, 'mixed')) {
+                    return null;
+                }
+            }
+
+            $node->type->types[] = new Node\Name('null');
+            return $node;
         }
 
         // Convert `Type` to `?Type`
