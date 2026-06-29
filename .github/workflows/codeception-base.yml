@@ -26,10 +26,13 @@ on:
         description: List of extensions to PHP.
         default: curl, intl, pdo, pdo_mysql, zip, exif, fileinfo, mbstring, gd, ldap
         type: string
-      mysql:
-        description: MySQL versions to test, separated by comma.
+      databases:
+        # JSON list of {engine, version}. engine: mariadb | mysql.
+        # Validated: mariadb 11.8 (LTS, recommended) & 12.3 (LTS); mysql 8.4 (LTS) & 9.7 (LTS).
+        # Default runs MariaDB 11.8 only. Modules can override per-module to test more/other combinations (rare case).
+        description: Databases to test, JSON list of {engine, version} objects.
         default: >-
-          ['5.7']
+          [{"engine": "mariadb", "version": "11.8"}]
         type: string
       use-rest-module:
         description: Activate REST API module for api tests.
@@ -168,7 +171,7 @@ jobs:
           fi
 
   tests:
-    name: PHP ${{ matrix.php }}-mysql-${{ matrix.mysql }}-humhub-${{ inputs.humhub-branch }}
+    name: PHP ${{ matrix.php }}-${{ matrix.db.engine }}-${{ matrix.db.version }}-humhub-${{ inputs.humhub-branch }}
 
     needs: check-compatibility
     if: needs.check-compatibility.outputs.skip == 'false'
@@ -185,17 +188,19 @@ jobs:
       matrix:
         os: ${{ fromJson(inputs.os) }}
         php: ${{ fromJson(inputs.php) }}
-        mysql: ${{ fromJson(inputs.mysql) }}
+        db: ${{ fromJson(inputs.databases) }}
 
     services:
-      mysql:
-        image: mysql:${{ matrix.mysql }}
+      db:
+        image: ${{ matrix.db.engine == 'mariadb' && format('mariadb:{0}', matrix.db.version) || format('mysql:{0}', matrix.db.version) }}
         env:
           MYSQL_DATABASE: humhub_test
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="${{ matrix.db.engine == 'mariadb' && 'healthcheck.sh --connect --innodb_initialized' || 'mysqladmin ping' }}"
+          --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Start Selenium
