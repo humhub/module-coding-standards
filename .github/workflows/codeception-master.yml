@@ -29,8 +29,7 @@ on:
       databases:
         # JSON list of {engine, version}. engine: mariadb | mysql.
         # Validated: mariadb 11.8 (LTS, recommended) & 12.3 (LTS); mysql 8.4 (LTS) & 9.7 (LTS).
-        # Default runs MariaDB 11.8 only; broader engine/version coverage lives in the weekly DB-compat sweep.
-        # Modules can override to test more/other combinations (rare case).
+        # Default runs MariaDB 11.8 only. Modules can override per-module to test more/other combinations (rare case).
         description: Databases to test, JSON list of {engine, version} objects.
         default: >-
           [{"engine": "mariadb", "version": "11.8"}]
