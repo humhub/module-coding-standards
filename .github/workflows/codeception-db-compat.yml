@@ -1,17 +1,17 @@
-name: module-tests-develop
+name: module-tests-db-compat
 
 on:
   workflow_call:
     inputs:
-      humhub-branch:
-        description: Test against HumHub Branch.
-        required: false
-        default: develop
+      humhub-branches:
+        description: HumHub core branches to test against, JSON list.
+        default: >-
+          ['master', 'develop']
         type: string
       php:
-        description: PHP versions to test, separated by comma.
+        description: PHP versions to test, separated by comma (pinned for the DB sweep).
         default: >-
-          ['8.2', '8.3', '8.4']
+          ['8.4']
         type: string
       os:
         description: Os to test, separated by comma.
@@ -27,13 +27,11 @@ on:
         default: curl, intl, pdo, pdo_mysql, zip, exif, fileinfo, mbstring, gd, ldap
         type: string
       databases:
-        # JSON list of {engine, version}. engine: mariadb | mysql.
-        # Validated: mariadb 11.8 (LTS, recommended) & 12.3 (LTS); mysql 8.4 (LTS) & 9.7 (LTS).
-        # Default runs MariaDB 11.8 only; broader engine/version coverage lives in the weekly DB-compat sweep.
-        # Modules can override to test more/other combinations (rare case).
+        # DB-compatibility sweep: each engine across its min + LTS tiers.
+        # mariadb 10.11 (min), 11.8 (LTS), 12.3 (LTS); mysql 8.0 (min), 8.4 (LTS), 9.7 (LTS).
         description: Databases to test, JSON list of {engine, version} objects.
         default: >-
-          [{"engine": "mariadb", "version": "11.8"}]
+          [{"engine": "mariadb", "version": "10.11"}, {"engine": "mariadb", "version": "11.8"}, {"engine": "mariadb", "version": "12.3"}, {"engine": "mysql", "version": "8.0"}, {"engine": "mysql", "version": "8.4"}, {"engine": "mysql", "version": "9.7"}]
         type: string
       use-rest-module:
         description: Activate REST API module for api tests.
@@ -42,7 +40,7 @@ on:
       rest-module-branch:
         description: REST API Module Branch.
         type: string
-        default: develop
+        default: master
       run-solr:
         description: Run Apache Solr.
         default: false
@@ -65,10 +63,14 @@ on:
 
 jobs:
   call-base:
+    strategy:
+      fail-fast: false
+      matrix:
+        humhub-branch: ${{ fromJson(inputs.humhub-branches) }}
     uses: ./.github/workflows/codeception-base.yml
     with:
       module-id: ${{ inputs.module-id }}
-      humhub-branch: ${{ inputs.humhub-branch }}
+      humhub-branch: ${{ matrix.humhub-branch }}
       php: ${{ inputs.php }}
       extensions: ${{ inputs.extensions }}
       databases: ${{ inputs.databases }}

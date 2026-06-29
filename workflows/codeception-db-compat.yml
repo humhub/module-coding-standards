@@ -1,0 +1,13 @@
+name: Codeception Tests - DB compatibility
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1"
+
+jobs:
+  tests:
+    uses: humhub/module-coding-standards/.github/workflows/codeception-db-compat.yml@main
+    with:
+      module-id: example-basic
+      use-rest-module: false

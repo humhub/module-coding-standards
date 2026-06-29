@@ -26,10 +26,14 @@ on:
         description: List of extensions to PHP.
         default: curl, intl, pdo, pdo_mysql, zip, exif, fileinfo, mbstring, gd, ldap
         type: string
-      mysql:
-        description: MySQL versions to test, separated by comma.
+      databases:
+        # JSON list of {engine, version}. engine: mariadb | mysql.
+        # Validated: mariadb 11.8 (LTS, recommended) & 12.3 (LTS); mysql 8.4 (LTS) & 9.7 (LTS).
+        # Default runs MariaDB 11.8 only; broader engine/version coverage lives in the weekly DB-compat sweep.
+        # Modules can override to test more/other combinations (rare case).
+        description: Databases to test, JSON list of {engine, version} objects.
         default: >-
-          ['5.7']
+          [{"engine": "mariadb", "version": "11.8"}]
         type: string
       use-rest-module:
         description: Activate REST API module for api tests.
@@ -67,7 +71,7 @@ jobs:
       humhub-branch: ${{ inputs.humhub-branch }}
       php: ${{ inputs.php }}
       extensions: ${{ inputs.extensions }}
-      mysql: ${{ inputs.mysql }}
+      databases: ${{ inputs.databases }}
       use-rest-module: ${{ inputs.use-rest-module }}
       rest-module-branch: ${{ inputs.rest-module-branch }}
       run-solr: ${{ inputs.run-solr }}
