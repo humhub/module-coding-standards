@@ -373,13 +373,46 @@ jobs:
           cd $GITHUB_WORKSPACE/protected/modules/${{ inputs.additional-module-id }}
           composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
+      # TEMPORARY diagnostic — state on the RUNNING test server (:8080) right BEFORE codecept
+      # starts. If this shows the login form but the suite still fails, the state flips INSIDE
+      # codecept (fixture loading), not in the earlier steps.
+      - name: 'DEBUG: install-state right before test suite (temporary)'
+        continue-on-error: true
+        run: |
+          echo "::group::setting table (before codecept / fixtures)"
+          mysql -h127.0.0.1 -uroot -proot humhub_test \
+            -e "SELECT module_id,name,value FROM setting WHERE name LIKE '%InstallationState%';" 2>&1 || true
+          mysql -h127.0.0.1 -uroot -proot humhub_test -e "SELECT COUNT(*) AS setting_rows FROM setting;" 2>&1 || true
+          echo "::endgroup::"
+          echo "::group::running test server :8080 /user/auth/login (before test)"
+          curl -s http://127.0.0.1:8080/user/auth/login \
+            | grep -oiE "Login\[username\]|This wizard will install|installer/index/go|Sign In" | sort -u \
+            || echo "(no markers / server down)"
+          echo "::endgroup::"
+
       - name: Run test suite
         run: |
           export HUMHUB_PATH=$GITHUB_WORKSPACE
           cd $GITHUB_WORKSPACE/protected/modules/${{ env.module-id }}/tests
           php $GITHUB_WORKSPACE/protected/vendor/bin/codecept build
           php $GITHUB_WORKSPACE/protected/vendor/bin/codecept run --env github
-          
+
+      # TEMPORARY diagnostic — state AFTER the suite (runs even on failure).
+      - name: 'DEBUG: install-state after test suite (temporary)'
+        if: always()
+        continue-on-error: true
+        run: |
+          echo "::group::setting table (after codecept / fixtures)"
+          mysql -h127.0.0.1 -uroot -proot humhub_test \
+            -e "SELECT module_id,name,value FROM setting WHERE name LIKE '%InstallationState%';" 2>&1 || true
+          mysql -h127.0.0.1 -uroot -proot humhub_test -e "SELECT COUNT(*) AS setting_rows FROM setting;" 2>&1 || true
+          echo "::endgroup::"
+          echo "::group::running test server :8080 /user/auth/login (after test)"
+          curl -s http://127.0.0.1:8080/user/auth/login \
+            | grep -oiE "Login\[username\]|This wizard will install|installer/index/go|Sign In" | sort -u \
+            || echo "(no markers / server down)"
+          echo "::endgroup::"
+
       - name: Upload Codeception Output
         if: failure()
         uses: actions/upload-artifact@v4
