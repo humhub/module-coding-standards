@@ -280,6 +280,49 @@ jobs:
       - name: Run installer
         run: php protected/humhub/tests/codeception/bin/yii installer/auto
 
+      # TEMPORARY diagnostic — remove once the core-develop acceptance failure is understood.
+      # Acceptance tests against humhub-develop redirect /user/auth/login to the setup wizard
+      # ("Login[username]" not found), i.e. the app reports "not installed" at web-request time
+      # even though the CLI install succeeded. This step dumps the effective state/config so we
+      # can see WHY (DB config not reaching the web process vs. install-state not persisted).
+      # Uses only static commands (no workflow inputs) and never fails the job.
+      - name: 'DEBUG: acceptance install-state diagnosis (temporary)'
+        continue-on-error: true
+        run: |
+          echo "::group::Environment variables (HUMHUB / DB related)"
+          env | grep -iE 'HUMHUB|MYSQL|(^|_)DB_|DATABASE' | sort || echo "(none)"
+          echo "::endgroup::"
+
+          echo "::group::env.php present?"
+          if [ -f protected/humhub/tests/config/env/env.php ]; then
+            cat protected/humhub/tests/config/env/env.php
+          else
+            echo "NO env.php committed/created"
+          fi
+          echo "::endgroup::"
+
+          echo "::group::dynamic.php (read by index-test.php web entry)"
+          cat protected/humhub/tests/codeception/config/dynamic.php 2>/dev/null || echo "(missing)"
+          echo "::endgroup::"
+
+          echo "::group::DB: setting table (InstallationState = 3 means installed)"
+          mysql -h127.0.0.1 -uroot -proot humhub_test \
+            -e "SELECT module_id,name,value FROM setting WHERE name LIKE '%InstallationState%';" 2>&1 || true
+          echo "::endgroup::"
+
+          echo "::group::WEB: what does index-test.php render for /user/auth/login ?"
+          php -S 127.0.0.1:8099 index-test.php &>/tmp/debug-srv.log &
+          SRV=$!
+          sleep 4
+          echo "--- page markers (Login[username]/Sign In = ok ; will install/installer = wizard) ---"
+          curl -s http://127.0.0.1:8099/user/auth/login \
+            | grep -oiE "Login\[username\]|This wizard will install|installer/index/go|Sign In" | sort -u \
+            || echo "(no markers)"
+          echo "--- web server log (effective DB config / errors of the web process) ---"
+          tail -30 /tmp/debug-srv.log || true
+          kill "$SRV" 2>/dev/null || true
+          echo "::endgroup::"
+
       - name: Checkout REST Module
         if: ${{ inputs.use-rest-module }}
         uses: actions/checkout@v4
