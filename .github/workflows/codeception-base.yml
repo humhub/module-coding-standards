@@ -304,8 +304,12 @@ jobs:
 
       - name: Run test server
         run: |
-          # Temporary condition while branch "master" doesn't use pretty URLs on acceptance tests
-          if cat $GITHUB_WORKSPACE/.github/workflows/php-test.yml | grep -q ":8080 index-test.php"
+          # Temporary condition while branch "master" doesn't use pretty URLs on acceptance tests.
+          # The marker is grepped from the core's own test workflows; since humhub/humhub#8255
+          # the server command lives in php-test-base.yml, so check all php-test*.yml files —
+          # otherwise the server starts without the index-test.php router and acceptance
+          # requests are served by the production index.php (setup wizard instead of login).
+          if grep -qs ":8080 index-test.php" $GITHUB_WORKSPACE/.github/workflows/php-test*.yml
           then
             php --server 127.0.0.1:8080 index-test.php &>/tmp/phpserver.log &
           else
