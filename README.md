@@ -70,3 +70,7 @@ The predefined workflows from the `workflows` folder should be copied to the `.g
 | marketplace-upload      | On GitHub Module Releases, a module version is uploaded to the Marketplace.            |  
 
 > Note: Some workflows require additional configuration. e.g. Codeception enable REST API
+
+> Note: On the weekly scheduled runs (and manual dispatches), the `codeception-master`, `codeception-develop` and
+> `codeception-next` workflows additionally test the module's `develop` branch if one exists. Combinations outside
+> the develop branch's `humhub.minVersion`/`maxVersion` are skipped automatically.

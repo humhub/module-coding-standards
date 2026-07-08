@@ -78,3 +78,43 @@ jobs:
       additional-module-id: ${{ inputs.additional-module-id }}
       additional-module-repo: ${{ inputs.additional-module-repo }}
       additional-module-branch: ${{ inputs.additional-module-branch }}
+
+  # On scheduled and manually dispatched runs, additionally test the module's
+  # develop branch (if one exists) against the same core branch. Combinations
+  # outside the develop branch's min/max core version are skipped by the
+  # compatibility check in the base workflow.
+  check-develop-branch:
+    if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref_name != 'develop'
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - name: Check if the module has a develop branch
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/branches/develop" --silent; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  call-base-develop:
+    needs: check-develop-branch
+    if: needs.check-develop-branch.outputs.exists == 'true'
+    uses: ./.github/workflows/codeception-base.yml
+    with:
+      module-id: ${{ inputs.module-id }}
+      module-branch: develop
+      humhub-branch: ${{ inputs.humhub-branch }}
+      php: ${{ inputs.php }}
+      extensions: ${{ inputs.extensions }}
+      databases: ${{ inputs.databases }}
+      use-rest-module: ${{ inputs.use-rest-module }}
+      rest-module-branch: ${{ inputs.rest-module-branch }}
+      run-solr: ${{ inputs.run-solr }}
+      run-clamav: ${{ inputs.run-clamav }}
+      additional-module-id: ${{ inputs.additional-module-id }}
+      additional-module-repo: ${{ inputs.additional-module-repo }}
+      additional-module-branch: ${{ inputs.additional-module-branch }}
