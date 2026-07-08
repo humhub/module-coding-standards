@@ -12,6 +12,12 @@ on:
         required: false
         default: develop
         type: string
+      module-branch:
+        # Empty (default) checks out the ref that triggered the workflow.
+        description: Module branch to test instead of the triggering ref.
+        required: false
+        default: ''
+        type: string
       os:
         description: Os to test, separated by comma.
         default: >-
@@ -86,6 +92,7 @@ jobs:
       - name: Checkout Module
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.module-branch }}
           path: protected/modules/${{ inputs.module-id }}
 
       - name: Read module.json
@@ -171,7 +178,7 @@ jobs:
           fi
 
   tests:
-    name: PHP ${{ matrix.php }}-${{ matrix.db.engine }}-${{ matrix.db.version }}-humhub-${{ inputs.humhub-branch }}
+    name: PHP ${{ matrix.php }}-${{ matrix.db.engine }}-${{ matrix.db.version }}-humhub-${{ inputs.humhub-branch }}${{ inputs.module-branch != '' && format('-module-{0}', inputs.module-branch) || '' }}
 
     needs: check-compatibility
     if: needs.check-compatibility.outputs.skip == 'false'
@@ -218,6 +225,7 @@ jobs:
       - name: Checkout Module
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.module-branch }}
           path: protected/modules/${{ env.module-id }}
 
       - name: Checkout Additional Module
