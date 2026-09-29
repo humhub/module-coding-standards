@@ -317,7 +317,11 @@ jobs:
           # the server command lives in php-test-base.yml, so check all php-test*.yml files —
           # otherwise the server starts without the index-test.php router and acceptance
           # requests are served by the production index.php (setup wizard instead of login).
-          if grep -qs ":8080 index-test.php" $GITHUB_WORKSPACE/.github/workflows/php-test*.yml
+          # Since humhub/humhub#8459 the entry scripts live in public/, the document root.
+          if [ -f "$GITHUB_WORKSPACE/public/index-test.php" ]
+          then
+            php --server 127.0.0.1:8080 --docroot public public/index-test.php &>/tmp/phpserver.log &
+          elif grep -qs ":8080 index-test.php" $GITHUB_WORKSPACE/.github/workflows/php-test*.yml
           then
             php --server 127.0.0.1:8080 index-test.php &>/tmp/phpserver.log &
           else
