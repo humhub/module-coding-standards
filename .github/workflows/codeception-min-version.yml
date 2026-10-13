@@ -17,7 +17,8 @@ on:
         default: curl, intl, pdo, pdo_mysql, zip, exif, fileinfo, mbstring, gd, ldap
         type: string
       database:
-        description: Database engine to test against (mysql | mariadb).
+        # Deprecated: not used, kept only so existing callers passing it don't fail. Use "databases" instead.
+        description: Deprecated and ignored, use databases instead.
         default: mariadb
         type: string
       databases:
