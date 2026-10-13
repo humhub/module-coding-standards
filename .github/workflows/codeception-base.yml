@@ -327,7 +327,7 @@ jobs:
 #      - name: Setup chromedriver
 #        run: chromedriver --url-base=/wd/hub &
 
-      - name: Valdiate test server
+      - name: Validate test server
         run: sleep 5 && curl --fail --head http://127.0.0.1:8080/index-test.php
 
       - name: Install module dependencies
@@ -353,7 +353,8 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v6
         with:
-          name: codeception-output
+          # Unique per job: artifact names must not repeat within a workflow run
+          name: codeception-output-${{ matrix.os }}-php${{ matrix.php }}-${{ matrix.db.engine }}-${{ matrix.db.version }}-humhub-${{ inputs.humhub-branch }}${{ inputs.module-branch != '' && format('-module-{0}', inputs.module-branch) || '' }}
           path: |
             protected/modules/*/tests/codeception/_output/*
             protected/runtime/logs/*

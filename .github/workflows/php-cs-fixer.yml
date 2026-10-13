@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Run Rector
+      - name: Run PHP CS Fixer
         run: composer fixer
 
       - name: Create branch and Pull Request for new changes
