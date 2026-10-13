@@ -77,7 +77,7 @@ jobs:
       HUMHUB_BRANCH: ${{ inputs.humhub-branch }}
     steps:
       - name: Checkout HumHub Core
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: humhub/humhub
           ref: ${{ env.HUMHUB_BRANCH }}
@@ -90,7 +90,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Checkout Module
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.module-branch }}
           path: protected/modules/${{ inputs.module-id }}
@@ -214,23 +214,23 @@ jobs:
         run: |
           docker run --detach --net=host --shm-size="2g" selenium/standalone-chrome:108.0-20250123
                 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
 
       - name: Checkout HumHub Core
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: humhub/humhub
           ref: ${{ env.HUMHUB_BRANCH }}
 
       - name: Checkout Module
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.module-branch }}
           path: protected/modules/${{ env.module-id }}
 
       - name: Checkout Additional Module
         if: ${{ inputs.additional-module-id }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ inputs.additional-module-repo }}/${{ inputs.additional-module-id }}
           ref: ${{ inputs.additional-module-branch }}
@@ -266,7 +266,7 @@ jobs:
         run: composer validate
 
       - name: Cache dependencies installed with composer
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php${{ matrix.php }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
@@ -290,7 +290,7 @@ jobs:
 
       - name: Checkout REST Module
         if: ${{ inputs.use-rest-module }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: 'humhub/rest'
           ref: ${{ inputs.rest-module-branch }}
@@ -351,7 +351,7 @@ jobs:
           
       - name: Upload Codeception Output
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: codeception-output
           path: |

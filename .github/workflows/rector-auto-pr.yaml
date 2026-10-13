@@ -17,14 +17,14 @@ jobs:
 
     steps:
       - name: Checkout HumHub Core
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: humhub/humhub
           path: humhub
           fetch-depth: 0
 
       - name: Checkout Module
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: module
           fetch-depth: 0
@@ -68,7 +68,7 @@ jobs:
         run: echo "PR_TOKEN=${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ env.PR_TOKEN }}
           path: module
