@@ -87,14 +87,31 @@ jobs:
         # minVersion: "1.18.0-beta"
         # → find v1.18.0-beta.1, v1.18.0-beta.2
         # → choose v1.18.0-beta.2.
+        #
+        # minVersion: "1.20" (only v1.20.0-beta.1, v1.20.0-beta.2 exist)
+        # → no final release yet, fall back to pre-releases
+        # → choose v1.20.0-beta.2
+        #
+        # Note: "sort -V" sorts v1.18.0-beta.N after v1.18.0, so pre-release
+        # tags are dropped unless minVersion is a pre-release itself.
         id: get-tag
         run: |
           git clone --quiet --filter=blob:none --tags https://github.com/humhub/humhub.git humhub-core
           cd humhub-core
           base="${{ steps.get-min.outputs.minVersion }}"
           
-          # Search with "v" Prefix
-          tags=$(git tag -l "v${base}*")
+          # Search with "v" Prefix; match the exact version or its sub-versions only
+          # (e.g. "1.1" must not match v1.10 ... v1.19)
+          tags=$(git tag -l "v${base}" "v${base}.*" "v${base}-*")
+
+          # Prefer final releases unless minVersion is a pre-release itself
+          if [[ "$base" != *-* ]]; then
+            releases=$(echo "$tags" | grep -v -- '-' || true)
+            if [ -n "$releases" ]; then
+              tags="$releases"
+            fi
+          fi
+
           if [ -n "$tags" ]; then
             latest=$(echo "$tags" | sort -V | tail -n1)
             echo "Found latest patch tag: $latest"
