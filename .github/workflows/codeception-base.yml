@@ -77,7 +77,7 @@ jobs:
       HUMHUB_BRANCH: ${{ inputs.humhub-branch }}
     steps:
       - name: Checkout HumHub Core
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: humhub/humhub
           ref: ${{ env.HUMHUB_BRANCH }}
@@ -90,7 +90,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Checkout Module
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.module-branch }}
           path: protected/modules/${{ inputs.module-id }}
@@ -214,23 +214,25 @@ jobs:
         run: |
           docker run --detach --net=host --shm-size="2g" selenium/standalone-chrome:108.0-20250123
                 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
 
       - name: Checkout HumHub Core
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: humhub/humhub
           ref: ${{ env.HUMHUB_BRANCH }}
 
       - name: Checkout Module
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.module-branch }}
           path: protected/modules/${{ env.module-id }}
 
       - name: Checkout Additional Module
         if: ${{ inputs.additional-module-id }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.additional-module-repo }}/${{ inputs.additional-module-id }}
           ref: ${{ inputs.additional-module-branch }}
@@ -266,7 +268,7 @@ jobs:
         run: composer validate
 
       - name: Cache dependencies installed with composer
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php${{ matrix.php }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
@@ -280,7 +282,7 @@ jobs:
         run: npm install
 
       - name: Build production assets
-        run: grunt build-assets
+        run: npx grunt build-assets
 
       - name: Run migrations
         run: php protected/humhub/tests/codeception/bin/yii migrate/up --includeModuleMigrations=1 --interactive=0
@@ -290,7 +292,7 @@ jobs:
 
       - name: Checkout REST Module
         if: ${{ inputs.use-rest-module }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: 'humhub/rest'
           ref: ${{ inputs.rest-module-branch }}
@@ -355,7 +357,7 @@ jobs:
           
       - name: Upload Codeception Output
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           # Unique per job: artifact names must not repeat within a workflow run
           name: codeception-output-${{ matrix.os }}-php${{ matrix.php }}-${{ matrix.db.engine }}-${{ matrix.db.version }}-humhub-${{ inputs.humhub-branch }}${{ inputs.module-branch != '' && format('-module-{0}', inputs.module-branch) || '' }}

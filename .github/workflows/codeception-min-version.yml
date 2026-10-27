@@ -63,7 +63,7 @@ jobs:
       php-version: ${{ steps.get-php.outputs.php-version }}
     steps:
       - name: Checkout Module
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           path: protected/modules/${{ inputs.module-id }}
 
