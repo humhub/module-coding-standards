@@ -17,14 +17,14 @@ jobs:
 
     steps:
       - name: Checkout HumHub Core
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: humhub/humhub
           path: humhub
           fetch-depth: 0
 
       - name: Checkout Module
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           path: module
           fetch-depth: 0

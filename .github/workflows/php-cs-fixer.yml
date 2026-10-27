@@ -15,7 +15,7 @@ jobs:
       skip_phpcs: 'false'
     steps:
       - name: Checkout Module
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Check if branch is allowed
         run: |
