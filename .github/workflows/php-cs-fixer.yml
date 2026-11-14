@@ -52,6 +52,8 @@ jobs:
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
+          # Discard cache changes in case a module accidentally tracks .php-cs-fixer.cache
+          git checkout -- .php-cs-fixer.cache 2>/dev/null || true
           if git diff --quiet; then
             echo "No changes detected by PHP-CS-Fixer. Skipping commit and PR creation."
             exit 0
