@@ -1,0 +1,13 @@
+name: Accessibility Checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  a11y:
+    uses: humhub/humhub/.github/workflows/a11y.yml@develop
+    with:
+      module: example-basic
+      # The module's own pages, checked along with the core pages (paths, comma-separated)
+      pages: /example-basic/index

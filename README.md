@@ -68,8 +68,14 @@ The predefined workflows from the `workflows` folder should be copied to the `.g
 | codeception-next        | Codeception tests against the HumHub core `next` branch                                |  
 | codeception-min-version | Codeception tests against the HumHub minimum version defined in `module.json`          |  
 | marketplace-upload      | On GitHub Module Releases, a module version is uploaded to the Marketplace.            |  
+| a11y                    | Accessibility checks (axe-core, WCAG 2.2 A/AA) of the core and the module's pages      |  
 
 > Note: Some workflows require additional configuration. e.g. Codeception enable REST API
+
+> Note: `a11y` calls the workflow of the HumHub core (`develop` branch, `core-ref` for another one), which enables the
+> module and checks its `pages` along with the core pages, in the light and dark mode, with and without high contrast.
+> It reports new violations in the job summary and does not fail for now. See `docs/develop/intro-testing.md` of the
+> core, section "Accessibility checks".
 
 > Note: On the weekly scheduled runs (and manual dispatches), the `codeception-master`, `codeception-develop` and
 > `codeception-next` workflows additionally test the module's `develop` branch if one exists. Combinations outside
